@@ -7,18 +7,15 @@ use 5.010001;
 use strict;
 use warnings;
 
+our @modules = grep {!/\ARegexp::Common::(Entry|Other|WithActions.*|_.*)\z/} do { require App::lcpan::Call; @{ App::lcpan::Call::call_lcpan_script(argv=>["modules", "--namespace", "Regexp::Common"]) } }; # PRECOMPUTE
+
 our $scenario = {
     summary => 'Benchmark module startup overhead of Regexp::Common modules',
 
     module_startup => 1,
 
     participants => [
-        {module=>'Regexp::Common'},
-        {module=>'Regexp::Common::time'},
-        {module=>'Regexp::Common::debian'},
-        {module=>'Regexp::Common::Emacs'},
-        {module=>'Regexp::Common::Email::Address'},
-        {module=>'Regexp::Common::net::CIDR'},
+        map { +{module=>$_} } @modules,
     ],
 };
 
